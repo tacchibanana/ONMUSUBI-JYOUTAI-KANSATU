@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONMUSUBI 状態観察チェックリスト v1.1</title>
+    <style>
+        :root { --primary: #005aad; --bg: #f4f7f9; --text: #333; --accent: #ff9800; }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; padding: 10px; color: var(--text); }
+        .container { max-width: 850px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        
+        .header { background: var(--primary); color: white; padding: 15px; text-align: center; }
+        .tabs { display: flex; background: #eee; border-bottom: 2px solid var(--primary); }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .tab.active { background: white; color: var(--primary); }
+
+        .content { display: none; padding: 20px; }
+        .content.active { display: block; }
+        
+        .section { margin-bottom: 25px; border: 1px solid #ddd; border-radius: 5px; padding: 15px; position: relative; }
+        .section-title { position: absolute; top: -12px; left: 15px; background: white; padding: 0 10px; font-weight: bold; color: var(--primary); border: 1px solid var(--primary); border-radius: 10px; font-size: 0.9em; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px; }
+        .field { display: flex; flex-direction: column; }
+        .sub-field { margin-top: 5px; padding: 5px; background: #f0f0f0; border-radius: 4px; display: flex; flex-direction: column; gap: 3px; }
+        .sub-field label { font-size: 0.75em; color: #666; }
+        
+        label { font-size: 0.85em; font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; }
+        input, select, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
+        input[type="text"].small-input { padding: 4px; font-size: 0.85em; }
+        
+        .help { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 12px; margin-left: 5px; cursor: pointer; border: none; }
+
+        .btn-generate { background: #28a745; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin: 20px 0; }
+        #outputReport { width: 100%; height: 280px; background: #fffde7; border: 1px solid #fbc02d; padding: 10px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>ONMUSUBI 状態観察シート v1.1</h2>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(0)">【基本項目】</div>
+        <div class="tab" onclick="switchTab(1)">【事故・外傷等】</div>
+        <div class="tab" onclick="switchTab(2)">【報告・記録】</div>
+    </div>
+
+    <div id="tab0" class="content active">
+        <div class="section">
+            <span class="section-title">バイタルサイン</span>
+            <div class="grid">
+                <div class="field"><label>体温 (℃)</label><input type="number" id="v_temp" step="0.1"></div>
+                <div class="field"><label>脈拍 (回/分)</label><input type="number" id="v_pulse"></div>
+                <div class="field"><label>不整脈</label><select id="v_arrhythmia"><option value="なし">なし</option><option value="あり">あり</option></select></div>
+                <div class="field"><label>血圧 (mmHg)</label><input type="text" id="v_bp" placeholder="120/80"></div>
+                <div class="field"><label>SpO2 (%) <button class="help" onclick="alert('SpO2：酸素飽和度。90%未満は酸素不足の可能性。')">?</button></label><input type="number" id="v_spo2"></div>
+                <div class="field"><label>呼吸数 (回/分)</label><input type="number" id="v_resp"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <span class="section-title">意識・全身状態</span>
+            <div class="grid">
+                <div class="field"><label>呼名反応 <button class="help" onclick="alert('やや鈍い：反応が遅い\nなし：全く反応しない')">?</button></label>
+                    <select id="s_cons"><option value="明瞭">あり(明瞭)</option><option value="やや鈍い">やや鈍い</option><option value="なし">なし</option></select>
+                </div>
+                <div class="field"><label>発語</label>
+                    <select id="s_speech"><option value="通常">通常通り</option><option value="不明瞭">不明瞭</option><option value="なし">なし</option></select>
+                </div>
+                <div class="field"><label>顔色 <button class="help" onclick="alert('蒼白：青白い\n紅潮：顔が赤い\nチアノーゼ：唇や爪が紫色')">?</button></label>
+                    <select id="s_face"><option value="正常">正常</option><option value="蒼白">蒼白</option><option value="紅潮">紅潮</option><option value="チアノーゼ">チアノーゼ</option></select>
+                </div>
+                <div class="field"><label>発汗 <button class="help" onclick="alert('冷汗：暑くないのにかく、ひやっとしてベタベタした汗')">?</button></label>
+                    <select id="s_sweat"><option value="なし">なし</option><option value="あり">あり(通常)</option><option value="冷汗">冷汗</option></select>
+                </div>
+                <div class="field"><label>表情</label>
+                    <select id="s_exp"><option value="普段通り">普段通り</option><option value="苦しそう">苦しそう</option><option value="険しい">険しい</option><option value="無表情">無表情</option></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <span class="section-title">症状・摂取・排泄</span>
+            <div class="grid">
+                <div class="field"><label>痛み</label>
+                    <select id="s_pain"><option value="なし">なし</option><option value="胸痛">胸痛</option><option value="腹痛">腹痛</option><option value="頭痛">頭痛</option><option value="その他">その他</option></select>
+                    <div class="sub-field"><label>部位</label><input type="text" id="s_pain_loc" class="small-input" placeholder="部位を入力"></div>
+                </div>
+                <div class="field"><label>呼吸状態 <button class="help" onclick="alert('喘鳴：ゼーゼー、ヒューヒューと音がする')">?</button></label>
+                    <select id="s_resp_st"><option value="正常">正常</option><option value="呼吸困難">呼吸困難</option><option value="喘鳴">喘鳴</option><option value="咳・痰">咳・痰</option></select>
+                </div>
+                <div class="field"><label>振戦・悪寒 <button class="help" onclick="alert('振戦：手足の小刻みな震え\n悪寒：発熱前などのゾクゾクする寒気')">?</button></label>
+                    <select id="s_shiver"><option value="なし">なし</option><option value="振戦あり">振戦あり</option><option value="悪寒あり">悪寒あり</option></select>
+                    <div class="sub-field"><label>部位</label><input type="text" id="s_shiver_loc" class="small-input" placeholder="手足・全身など"></div>
+                </div>
+                <div class="field"><label>痙攣・麻痺</label>
+                    <select id="s_paralysis"><option value="なし">なし</option><option value="痙攣">痙攣</option><option value="しびれ">しびれ</option><option value="麻痺">麻痺</option></select>
+                    <div class="sub-field"><label>部位・左右・持続時間</label><input type="text" id="s_para_loc" class="small-input" placeholder="例：右手上肢、1分間"></div>
+                </div>
+                <div class="field"><label>食事摂取量</label><select id="s_meal"><option value="全量">全量</option><option value="2/3">2/3</option><option value="1/2">1/2</option><option value="1/3">1/3</option><option value="1/4">1/4</option><option value="未摂取">未摂取</option></select></div>
+                <div class="field"><label>水分摂取</label><select id="s_water"><option value="良好">良好</option><option value="やや不良">やや不良</option><option value="不良">不良</option></select></div>
+                <div class="field"><label>嘔気・嘔吐</label>
+                    <select id="s_vomit"><option value="なし">なし</option><option value="嘔気">嘔気あり</option><option value="食物残渣">食物残渣</option><option value="コーヒー様">コーヒー様</option><option value="鮮血混入">鮮血混入</option></select>
+                </div>
+                <div class="field"><label>便の性状</label>
+                    <select id="s_stool"><option value="正常">正常</option><option value="軟便">軟便</option><option value="下痢">下痢</option><option value="血便">血便</option><option value="黒色便">黒色便</option><option value="便秘">便秘</option></select>
+                </div>
+                <div class="field"><label>腹部膨満</label><select id="s_abd"><option value="なし">なし</option><option value="あり">あり</option></select></div>
+                <div class="field"><label>尿の性状</label><select id="s_urine"><option value="正常">正常</option><option value="濃い">濃い</option><option value="薄い">薄い</option><option value="血尿">血尿</option><option value="混濁">混濁</option></select></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab1" class="content">
+        <div class="section">
+            <span class="section-title">事故状況</span>
+            <div class="grid">
+                <div class="field"><label>種別</label><select id="a_type"><option value="なし">なし</option><option value="転倒">転倒</option><option value="転落">転落</option></select></div>
+                <div class="field"><label>場所</label><input type="text" id="a_place" placeholder="居室/廊下/トイレ等"></div>
+                <div class="field"><label>体位</label>
+                    <select id="a_pos"><option value="仰向け">仰向け</option><option value="うつ伏せ">うつ伏せ</option><option value="右側臥位">右側臥位</option><option value="左側臥位">左側臥位</option><option value="座位">座位</option></select>
+                </div>
+                <div class="field"><label>転落元</label><input type="text" id="a_source" placeholder="ベッド/車椅子等"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <span class="section-title">外傷詳細 (有無・部位・程度)</span>
+            <div class="grid">
+                <div class="field"><label>打撲箇所</label>
+                    <input type="text" id="a_hit">
+                    <div class="sub-field"><label>左右</label><select id="a_hit_side"><option value="なし">-</option><option value="右">右</option><option value="左">左</option></select></div>
+                </div>
+                <div class="field"><label>発赤(赤み)</label><select id="a_red"><option value="無">無</option><option value="有">有</option></select></div>
+                <div class="field"><label>腫脹(はれ)</label><select id="a_swel"><option value="無">無</option><option value="有">有</option></select></div>
+                <div class="field"><label>切創/表皮剥離</label>
+                    <select id="a_cut"><option value="無">無</option><option value="切創あり">切創あり</option><option value="表皮剥離あり">表皮剥離あり</option></select>
+                    <div class="sub-field"><label>大きさ/程度</label><input type="text" id="a_cut_detail" class="small-input" placeholder="例：3cmx2cm、出血少量"></div>
+                </div>
+                <div class="field"><label>熱傷(やけど)</label>
+                    <select id="a_burn"><option value="無">無</option><option value="有">有</option></select>
+                    <div class="sub-field"><label>程度(Ⅰ~Ⅲ度)</label><input type="text" id="a_burn_detail" class="small-input" placeholder="例：Ⅱ度"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <span class="section-title">その他事故</span>
+            <div class="grid">
+                <div class="field"><label>誤薬</label><select id="a_med"><option value="なし">なし</option><option value="あり">あり</option></select></div>
+                <div class="field"><label>誤嚥・窒息</label><select id="a_asp"><option value="なし">なし</option><option value="疑い">疑いあり</option><option value="あり">あり</option></select></div>
+                <div class="field"><label>鼻出血</label><select id="a_nose"><option value="なし">なし</option><option value="あり">あり</option></select></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab2" class="content">
+        <div class="section">
+            <span class="section-title">対応・処置</span>
+            <div class="field"><label>実施した処置</label>
+                <textarea id="c_action" rows="3" placeholder="安静、冷却、消毒、絆創膏貼付など"></textarea>
+            </div>
+        </div>
+
+        <div class="section">
+            <span class="section-title">連絡状況</span>
+            <div class="grid">
+                <div class="field"><label>家族へ連絡日時</label><input type="datetime-local" id="c_fam"></div>
+                <div class="field"><label>医師へ連絡日時</label><input type="datetime-local" id="c_doc"></div>
+                <div class="field"><label>救急搬送時刻</label><input type="time" id="c_ems"></div>
+                <div class="field"><label>搬送先病院</label><input type="text" id="c_hosp"></div>
+            </div>
+        </div>
+        
+        <button class="btn-generate" onclick="generate()">記録を自動生成する</button>
+        <textarea id="outputReport" readonly placeholder="生成された記録がここに表示されます"></textarea>
+    </div>
+</div>
+
+<script>
+    function switchTab(idx) {
+        document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+        document.querySelectorAll('.content').forEach((c, i) => c.classList.toggle('active', i === idx));
+    }
+
+    function generate() {
+        const getV = (id) => document.getElementById(id).value || "未入力";
+        const now = new Date().toLocaleString();
+
+        let r = `【状態観察報告 (ONMUSUBI) v1.1】\n記録日時: ${now}\n\n`;
+        r += `■バイタルサイン\n`;
+        r += `体温:${getV('v_temp')}℃ 脈拍:${getV('v_pulse')} 不整脈:${getV('v_arrhythmia')} 血圧:${getV('v_bp')} SpO2:${getV('v_spo2')}% 呼吸数:${getV('v_resp')}\n\n`;
+        
+        r += `■意識・全身状態\n`;
+        r += `呼名反応:${getV('s_cons')} 発語:${getV('s_speech')} 顔色:${getV('s_face')} 発汗:${getV('s_sweat')} 表情:${getV('s_exp')}\n\n`;
+        
+        r += `■症状・摂取・排泄\n`;
+        r += `痛み:${getV('s_pain')}(${getV('s_pain_loc')}) 呼吸状態:${getV('s_resp_st')}\n`;
+        r += `振戦悪寒:${getV('s_shiver')}(${getV('s_shiver_loc')}) 痙攣麻痺:${getV('s_paralysis')}(${getV('s_para_loc')})\n`;
+        r += `食事:${getV('s_meal')} 水分:${getV('s_water')} 嘔吐:${getV('s_vomit')} 便:${getV('s_stool')} 腹満:${getV('s_abd')} 尿:${getV('s_urine')}\n\n`;
+
+        if(getV('a_type') !== "なし" || getV('a_hit') !== "未入力" || getV('a_cut') !== "無") {
+            r += `■事故・外傷\n`;
+            r += `種別:${getV('a_type')} 場所:${getV('a_place')} 体位:${getV('a_pos')} 転落元:${getV('a_source')}\n`;
+            r += `部位:${getV('a_hit_side')}${getV('a_hit')} (赤み:${getV('a_red')} 腫れ:${getV('a_swel')})\n`;
+            r += `創傷:${getV('a_cut')}(${getV('a_cut_detail')}) 熱傷:${getV('a_burn')}(${getV('a_burn_detail')})\n`;
+            r += `その他(誤薬:${getV('a_med')} 誤嚥:${getV('a_asp')} 鼻出血:${getV('a_nose')})\n\n`;
+        }
+
+        r += `■対応・処置\n${getV('c_action')}\n\n`;
+        r += `■連絡状況\n`;
+        r += `家族連絡:${getV('c_fam')} / 医師連絡:${getV('c_doc')}\n`;
+        if(getV('c_ems') !== "未入力") r += `救急搬送:${getV('c_ems')} (${getV('c_hosp')})\n`;
+
+        document.getElementById('outputReport').value = r;
+    }
+</script>
+
+</body>
+</html>
