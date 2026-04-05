@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONMUSUBI 状態観察チェックリスト v1.1</title>
+    <title>ONMUSUBI 状態観察チェックリスト v1.3</title>
     <style>
         :root { --primary: #005aad; --bg: #f4f7f9; --text: #333; --accent: #ff9800; }
         body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; padding: 10px; color: var(--text); }
@@ -29,17 +29,41 @@
         input, select, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
         input[type="text"].small-input { padding: 4px; font-size: 0.85em; }
         
+        /* 写真添付エリア */
+        .photo-upload-area { margin-top: 15px; border: 2px dashed #ccc; padding: 15px; border-radius: 8px; text-align: center; background: #fafafa; }
+        .photo-preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; justify-content: center; }
+        .photo-preview { width: 100px; height: 100px; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; }
+        .file-input-label { background: var(--primary); color: white; padding: 8px 15px; border-radius: 4px; cursor: pointer; display: inline-block; font-size: 0.9em; }
+        input[type="file"] { display: none; }
+
         .help { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 12px; margin-left: 5px; cursor: pointer; border: none; }
 
+        /* ボタン類 */
         .btn-generate { background: #28a745; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin: 20px 0; }
-        #outputReport { width: 100%; height: 280px; background: #fffde7; border: 1px solid #fbc02d; padding: 10px; font-family: monospace; white-space: pre-wrap; }
+        .action-btns { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-action { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; color: white; font-size: 0.95em; transition: 0.3s; }
+        .btn-copy { background: #007bff; }
+        .btn-print { background: #6c757d; }
+        .btn-action:active { opacity: 0.7; }
+
+        #outputReport { width: 100%; height: 280px; background: #fffde7; border: 1px solid #fbc02d; padding: 10px; font-family: monospace; white-space: pre-wrap; box-sizing: border-box; }
+
+        /* 印刷用設定 */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; }
+            .tabs, .btn-generate, .action-btns, .help, .photo-upload-area, .header { display: none !important; }
+            .content { display: block !important; padding: 0; }
+            #outputReport { border: none; height: auto; background: white; overflow: visible; }
+            .section { page-break-inside: avoid; border: 1px solid #eee; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h2>ONMUSUBI 状態観察シート v1.1</h2>
+        <h2>ONMUSUBI 状態観察シート v1.3</h2>
     </div>
 
     <div class="tabs">
@@ -68,7 +92,7 @@
                     <select id="s_cons"><option value="明瞭">あり(明瞭)</option><option value="やや鈍い">やや鈍い</option><option value="なし">なし</option></select>
                 </div>
                 <div class="field"><label>発語</label>
-                    <select id="s_speech"><option value="通常">通常通り</option><option value="不明瞭">不明瞭</option><option value="なし">なし</option></select>
+                    <select id="s_speech"><option value="通常">通常通り</option><option value="不明領">不明瞭</option><option value="なし">なし</option></select>
                 </div>
                 <div class="field"><label>顔色 <button class="help" onclick="alert('蒼白：青白い\n紅潮：顔が赤い\nチアノーゼ：唇や爪が紫色')">?</button></label>
                     <select id="s_face"><option value="正常">正常</option><option value="蒼白">蒼白</option><option value="紅潮">紅潮</option><option value="チアノーゼ">チアノーゼ</option></select>
@@ -128,6 +152,17 @@
         </div>
 
         <div class="section">
+            <span class="section-title">写真添付 (現場・外傷)</span>
+            <div class="photo-upload-area">
+                <label for="a_photos" class="file-input-label">📸 写真を撮影・選択する</label>
+                <input type="file" id="a_photos" accept="image/*" multiple onchange="previewImages(this)">
+                <div class="photo-preview-container" id="photoPreview">
+                    <p style="color:#999; font-size: 0.8em;">※写真はレポート送信時に添付有無が記録されます</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
             <span class="section-title">外傷詳細 (有無・部位・程度)</span>
             <div class="grid">
                 <div class="field"><label>打撲箇所</label>
@@ -176,21 +211,52 @@
         </div>
         
         <button class="btn-generate" onclick="generate()">記録を自動生成する</button>
+        
         <textarea id="outputReport" readonly placeholder="生成された記録がここに表示されます"></textarea>
+        
+        <div class="action-btns">
+            <button id="copyBtn" class="btn-action btn-copy" onclick="copyToClipboard()">📋 記録をコピー</button>
+            <button class="btn-action btn-print" onclick="window.print()">🖨️ 印刷する</button>
+        </div>
     </div>
 </div>
 
 <script>
+    let attachedPhotoCount = 0;
+
     function switchTab(idx) {
         document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
         document.querySelectorAll('.content').forEach((c, i) => c.classList.toggle('active', i === idx));
     }
 
+    // 写真プレビュー
+    function previewImages(input) {
+        const container = document.getElementById('photoPreview');
+        container.innerHTML = ""; 
+        attachedPhotoCount = input.files.length;
+
+        if (input.files && input.files.length > 0) {
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'photo-preview';
+                    container.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            });
+        } else {
+            container.innerHTML = '<p style="color:#999; font-size: 0.8em;">※写真はレポート送信時に添付有無が記録されます</p>';
+        }
+    }
+
+    // レポート生成
     function generate() {
         const getV = (id) => document.getElementById(id).value || "未入力";
         const now = new Date().toLocaleString();
 
-        let r = `【状態観察報告 (ONMUSUBI) v1.1】\n記録日時: ${now}\n\n`;
+        let r = `【状態観察報告 (ONMUSUBI) v1.3】\n記録日時: ${now}\n\n`;
         r += `■バイタルサイン\n`;
         r += `体温:${getV('v_temp')}℃ 脈拍:${getV('v_pulse')} 不整脈:${getV('v_arrhythmia')} 血圧:${getV('v_bp')} SpO2:${getV('v_spo2')}% 呼吸数:${getV('v_resp')}\n\n`;
         
@@ -202,20 +268,45 @@
         r += `振戦悪寒:${getV('s_shiver')}(${getV('s_shiver_loc')}) 痙攣麻痺:${getV('s_paralysis')}(${getV('s_para_loc')})\n`;
         r += `食事:${getV('s_meal')} 水分:${getV('s_water')} 嘔吐:${getV('s_vomit')} 便:${getV('s_stool')} 腹満:${getV('s_abd')} 尿:${getV('s_urine')}\n\n`;
 
-        if(getV('a_type') !== "なし" || getV('a_hit') !== "未入力" || getV('a_cut') !== "無") {
+        if(getV('a_type') !== "なし" || getV('a_hit') !== "" || getV('a_cut') !== "無" || attachedPhotoCount > 0) {
             r += `■事故・外傷\n`;
             r += `種別:${getV('a_type')} 場所:${getV('a_place')} 体位:${getV('a_pos')} 転落元:${getV('a_source')}\n`;
             r += `部位:${getV('a_hit_side')}${getV('a_hit')} (赤み:${getV('a_red')} 腫れ:${getV('a_swel')})\n`;
             r += `創傷:${getV('a_cut')}(${getV('a_cut_detail')}) 熱傷:${getV('a_burn')}(${getV('a_burn_detail')})\n`;
-            r += `その他(誤薬:${getV('a_med')} 誤嚥:${getV('a_asp')} 鼻出血:${getV('a_nose')})\n\n`;
+            r += `その他(誤薬:${getV('a_med')} 誤嚥:${getV('a_asp')} 鼻出血:${getV('a_nose')})\n`;
+            if(attachedPhotoCount > 0) {
+                r += `【写真添付あり: ${attachedPhotoCount}枚】\n`;
+            }
+            r += `\n`;
         }
 
         r += `■対応・処置\n${getV('c_action')}\n\n`;
         r += `■連絡状況\n`;
         r += `家族連絡:${getV('c_fam')} / 医師連絡:${getV('c_doc')}\n`;
-        if(getV('c_ems') !== "未入力") r += `救急搬送:${getV('c_ems')} (${getV('c_hosp')})\n`;
+        if(getV('c_ems') !== "") r += `救急搬送:${getV('c_ems')} (${getV('c_hosp')})\n`;
 
         document.getElementById('outputReport').value = r;
+    }
+
+    // コピー機能
+    function copyToClipboard() {
+        const text = document.getElementById('outputReport');
+        if (!text.value) {
+            alert("記録が生成されていません。先に「記録を自動生成する」を押してください。");
+            return;
+        }
+        text.select();
+        document.execCommand('copy');
+        
+        const btn = document.getElementById('copyBtn');
+        const originalText = btn.innerText;
+        btn.innerText = "✅ コピーしました！";
+        btn.style.background = "#28a745";
+        
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = "#007bff";
+        }, 2000);
     }
 </script>
 
