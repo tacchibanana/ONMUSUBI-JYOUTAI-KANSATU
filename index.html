@@ -3,59 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONMUSUBI 状態観察チェックリスト v1.3</title>
+    <title>ONMUSUBI 状態観察チェックリスト v1.4</title>
     <style>
-        :root { --primary: #005aad; --bg: #f4f7f9; --text: #333; --accent: #ff9800; }
-        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; padding: 10px; color: var(--text); }
-        .container { max-width: 850px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        .header { background: var(--primary); color: white; padding: 15px; text-align: center; }
-        .tabs { display: flex; background: #eee; border-bottom: 2px solid var(--primary); }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .tab.active { background: white; color: var(--primary); }
+        :root { 
+            --soft-pink: #fdf2f4;
+            --accent-pink: #e8aeba;
+            --soft-green: #f7faf7;
+            --accent-green: #a8c69f;
+            --text-main: #4a4a4a;
+            --border-color: #d1dfd1;
+        }
 
-        .content { display: none; padding: 20px; }
+        body { 
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
+            background: var(--soft-green); 
+            margin: 0; 
+            padding: 10px; 
+            color: var(--text-main); 
+            line-height: 1.6;
+        }
+
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            overflow: hidden; 
+            border: 1px solid var(--border-color);
+        }
+        
+        .header { 
+            background: var(--accent-pink); 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .header h2 { margin: 0; font-size: 1.4em; letter-spacing: 1px; }
+
+        .tabs { 
+            display: flex; 
+            background: #fff; 
+            border-bottom: 2px solid var(--accent-pink); 
+            width: 100%;
+        }
+
+        .tab { 
+            flex: 1; 
+            padding: 14px 4px; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            color: #666; 
+            border-bottom: 4px solid transparent;
+            font-size: 0.85em; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis;
+        }
+
+        .tab.active { 
+            background: var(--soft-pink); 
+            color: #d87a8c; 
+            border-bottom: 4px solid var(--accent-pink);
+        }
+
+        @media (min-width: 480px) {
+            .tab { font-size: 0.95em; padding: 14px 10px; }
+        }
+
+        .content { display: none; padding: 25px; }
         .content.active { display: block; }
         
-        .section { margin-bottom: 25px; border: 1px solid #ddd; border-radius: 5px; padding: 15px; position: relative; }
-        .section-title { position: absolute; top: -12px; left: 15px; background: white; padding: 0 10px; font-weight: bold; color: var(--primary); border: 1px solid var(--primary); border-radius: 10px; font-size: 0.9em; }
+        .section { 
+            margin-bottom: 30px; 
+            border: 1.5px solid var(--border-color); 
+            border-radius: 8px; 
+            padding: 20px 15px 15px; 
+            position: relative; 
+            background-color: #fff;
+        }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px; }
+        .section-title { 
+            position: absolute; 
+            top: -14px; 
+            left: 15px; 
+            background: white; 
+            padding: 0 12px; 
+            font-weight: bold; 
+            color: var(--accent-green); 
+            border: 1.5px solid var(--accent-green); 
+            border-radius: 20px; 
+            font-size: 0.85em; 
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 18px; 
+            margin-top: 5px; 
+        }
+
         .field { display: flex; flex-direction: column; }
-        .sub-field { margin-top: 5px; padding: 5px; background: #f0f0f0; border-radius: 4px; display: flex; flex-direction: column; gap: 3px; }
-        .sub-field label { font-size: 0.75em; color: #666; }
+
+        .sub-field { 
+            margin-top: 8px; 
+            padding: 8px; 
+            background: var(--soft-green); 
+            border-radius: 6px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .sub-field label { font-size: 0.75em; color: #777; }
         
-        label { font-size: 0.85em; font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; }
-        input, select, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
-        input[type="text"].small-input { padding: 4px; font-size: 0.85em; }
+        label { 
+            font-size: 0.88em; 
+            font-weight: bold; 
+            margin-bottom: 6px; 
+            display: flex; 
+            align-items: center; 
+            color: #555;
+        }
+
+        input, select, textarea { 
+            padding: 10px; 
+            border: 1.5px solid var(--border-color); 
+            border-radius: 6px; 
+            font-size: 1em; 
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            background-color: var(--soft-pink);
+        }
+
+        input[type="text"].small-input, input[type="number"].small-input { padding: 6px; font-size: 0.9em; }
         
-        /* 写真添付エリア */
-        .photo-upload-area { margin-top: 15px; border: 2px dashed #ccc; padding: 15px; border-radius: 8px; text-align: center; background: #fafafa; }
-        .photo-preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; justify-content: center; }
-        .photo-preview { width: 100px; height: 100px; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; }
-        .file-input-label { background: var(--primary); color: white; padding: 8px 15px; border-radius: 4px; cursor: pointer; display: inline-block; font-size: 0.9em; }
+        .photo-upload-area { 
+            margin-top: 15px; 
+            border: 2px dashed var(--accent-green); 
+            padding: 20px; 
+            border-radius: 10px; 
+            text-align: center; 
+            background: var(--soft-green); 
+        }
+
+        .photo-preview-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+            margin-top: 15px; 
+            justify-content: center; 
+        }
+
+        .photo-preview { 
+            width: 110px; 
+            height: 110px; 
+            border-radius: 8px; 
+            object-fit: cover; 
+            border: 2px solid white; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .file-input-label { 
+            background: var(--accent-green); 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            display: inline-block; 
+            font-size: 0.9em; 
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .file-input-label:hover { opacity: 0.8; transform: translateY(-1px); }
+
         input[type="file"] { display: none; }
 
-        .help { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 12px; margin-left: 5px; cursor: pointer; border: none; }
+        .help { 
+            display: inline-block; 
+            width: 18px; 
+            height: 18px; 
+            background: #d1d1d1; 
+            color: white; 
+            border-radius: 50%; 
+            text-align: center; 
+            line-height: 18px; 
+            font-size: 11px; 
+            margin-left: 6px; 
+            cursor: pointer; 
+            border: none; 
+            flex-shrink: 0;
+        }
 
-        /* ボタン類 */
-        .btn-generate { background: #28a745; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin: 20px 0; }
-        .action-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-action { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; color: white; font-size: 0.95em; transition: 0.3s; }
-        .btn-copy { background: #007bff; }
-        .btn-print { background: #6c757d; }
-        .btn-action:active { opacity: 0.7; }
+        .btn-generate { 
+            background: var(--accent-pink); 
+            color: white; 
+            width: 100%; 
+            padding: 16px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 1.1em; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin: 25px 0; 
+            box-shadow: 0 4px 0 #d18d9b;
+            transition: 0.2s;
+        }
 
-        #outputReport { width: 100%; height: 280px; background: #fffde7; border: 1px solid #fbc02d; padding: 10px; font-family: monospace; white-space: pre-wrap; box-sizing: border-box; }
+        .btn-generate:active { transform: translateY(3px); box-shadow: none; }
+
+        .action-btns { display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
+        
+        .btn-action { 
+            flex: 1; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            color: white; 
+            font-size: 0.95em; 
+            transition: 0.3s; 
+            min-width: 120px;
+        }
+
+        .btn-copy { background: #8bb6e8; }
+        .btn-print { background: #a8c69f; }
+        .btn-clear { background: #d1a5a5; }
+        .btn-action:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        #outputReport { 
+            width: 100%; 
+            height: 280px; 
+            background: #fdfdfd; 
+            border: 2px solid var(--accent-pink); 
+            padding: 15px; 
+            font-family: "Courier New", Courier, monospace; 
+            white-space: pre-wrap; 
+            box-sizing: border-box; 
+            resize: vertical;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
 
         /* 印刷用設定 */
         @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; max-width: 100%; }
-            .tabs, .btn-generate, .action-btns, .help, .photo-upload-area, .header { display: none !important; }
+            @page { size: A4; margin: 10mm; }
+            body { background: white; padding: 0; font-size: 11px; color: #000; }
+            .container { box-shadow: none; max-width: 100%; border: none; }
+            .tabs, .btn-generate, .action-btns, .help, .header { display: none !important; }
+            .file-input-label, .photo-upload-area p, input[type="file"] { display: none !important; }
+            .photo-upload-area { border: none !important; background: transparent !important; padding: 0 !important; margin: 10px 0 !important; }
+            .photo-preview { width: 150px; height: 150px; }
             .content { display: block !important; padding: 0; }
-            #outputReport { border: none; height: auto; background: white; overflow: visible; }
-            .section { page-break-inside: avoid; border: 1px solid #eee; }
+            #outputReport { display: none !important; }
+            .section { page-break-inside: avoid; border: 1px solid #ccc; margin-bottom: 10px; padding: 12px 10px 8px; }
+            .section-title { color: #000; border-color: #000; font-size: 10px; top: -10px; }
+            .grid { gap: 5px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+            input, select, textarea { border: none; border-bottom: 1px solid #eee; padding: 2px; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
@@ -63,7 +280,7 @@
 
 <div class="container">
     <div class="header">
-        <h2>ONMUSUBI 状態観察シート v1.3</h2>
+        <h2>ONMUSUBI 状態観察シート v1.4</h2>
     </div>
 
     <div class="tabs">
@@ -72,36 +289,63 @@
         <div class="tab" onclick="switchTab(2)">【報告・記録】</div>
     </div>
 
+    <!-- Tab 0 -->
     <div id="tab0" class="content active">
         <div class="section">
             <span class="section-title">バイタルサイン</span>
             <div class="grid">
-                <div class="field"><label>体温 (℃)</label><input type="number" id="v_temp" step="0.1"></div>
-                <div class="field"><label>脈拍 (回/分)</label><input type="number" id="v_pulse"></div>
-                <div class="field"><label>不整脈</label><select id="v_arrhythmia"><option value="なし">なし</option><option value="あり">あり</option></select></div>
-                <div class="field"><label>血圧 (mmHg)</label><input type="text" id="v_bp" placeholder="120/80"></div>
-                <div class="field"><label>SpO2 (%) <button class="help" onclick="alert('SpO2：酸素飽和度。90%未満は酸素不足の可能性。')">?</button></label><input type="number" id="v_spo2"></div>
-                <div class="field"><label>呼吸数 (回/分)</label><input type="number" id="v_resp"></div>
+                <div class="field">
+                    <label>体温 (℃) <button class="help" onclick="alert('平熱より1℃高い、または37.5℃以上の場合は発熱の可能性があります。')">?</button></label>
+                    <input type="number" id="v_temp" step="0.1">
+                </div>
+                <div class="field">
+                    <label>脈拍 (回/分) <button class="help" onclick="alert('成人の目安は60～100回/分です。普段の数値との乖離を確認してください。')">?</button></label>
+                    <input type="number" id="v_pulse">
+                </div>
+                <div class="field">
+                    <label>不整脈 <button class="help" onclick="alert('脈のリズムが不規則（飛ぶ、間隔がバラバラ）な場合に「あり」を選択。')">?</button></label>
+                    <select id="v_arrhythmia"><option value="">-</option><option value="なし">なし</option><option value="あり">あり</option></select>
+                </div>
+                <div class="field">
+                    <label>血圧 (mmHg) <button class="help" onclick="alert('上140以上、下90以上が高血圧の目安です。')">?</button></label>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <input type="number" id="v_bp_high" class="small-input" placeholder="最高" style="width:45%;"> /
+                        <input type="number" id="v_bp_low" class="small-input" placeholder="最低" style="width:45%;">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>SpO2 (%) <button class="help" onclick="alert('SpO2：酸素飽和度。90%未満は酸素不足の可能性があり注意が必要です。')">?</button></label>
+                    <input type="number" id="v_spo2">
+                </div>
+                <div class="field">
+                    <label>呼吸数 (回/分) <button class="help" onclick="alert('安静時12～20回/分が目安。25回以上の頻呼吸や肩呼吸に注意。')">?</button></label>
+                    <input type="number" id="v_resp">
+                </div>
             </div>
         </div>
 
         <div class="section">
             <span class="section-title">意識・全身状態</span>
             <div class="grid">
-                <div class="field"><label>呼名反応 <button class="help" onclick="alert('やや鈍い：反応が遅い\nなし：全く反応しない')">?</button></label>
-                    <select id="s_cons"><option value="明瞭">あり(明瞭)</option><option value="やや鈍い">やや鈍い</option><option value="なし">なし</option></select>
+                <div class="field">
+                    <label>呼名反応 <button class="help" onclick="alert('名前を呼んだ際の反応。普段より反応が遅い場合は注意。')">?</button></label>
+                    <select id="s_cons"><option value="">-</option><option value="明瞭">あり(明瞭)</option><option value="やや鈍い">やや鈍い</option><option value="なし">なし</option></select>
                 </div>
-                <div class="field"><label>発語</label>
-                    <select id="s_speech"><option value="通常">通常通り</option><option value="不明領">不明瞭</option><option value="なし">なし</option></select>
+                <div class="field">
+                    <label>発語 <button class="help" onclick="alert('ろれつが回らない、言葉が出にくい等は脳血管障害のサインの可能性があります。')">?</button></label>
+                    <select id="s_speech"><option value="">-</option><option value="通常">通常通り</option><option value="不明領">不明瞭</option><option value="なし">なし</option></select>
                 </div>
-                <div class="field"><label>顔色 <button class="help" onclick="alert('蒼白：青白い\n紅潮：顔が赤い\nチアノーゼ：唇や爪が紫色')">?</button></label>
-                    <select id="s_face"><option value="正常">正常</option><option value="蒼白">蒼白</option><option value="紅潮">紅潮</option><option value="チアノーゼ">チアノーゼ</option></select>
+                <div class="field">
+                    <label>顔色 <button class="help" onclick="alert('蒼白（ショック症状）、チアノーゼ（唇が紫・酸素不足）、紅潮（発熱）など。')">?</button></label>
+                    <select id="s_face"><option value="">-</option><option value="正常">正常</option><option value="蒼白">蒼白</option><option value="紅潮">紅潮</option><option value="チアノーゼ">チアノーゼ</option></select>
                 </div>
-                <div class="field"><label>発汗 <button class="help" onclick="alert('冷汗：暑くないのにかく、ひやっとしてベタベタした汗')">?</button></label>
-                    <select id="s_sweat"><option value="なし">なし</option><option value="あり">あり(通常)</option><option value="冷汗">冷汗</option></select>
+                <div class="field">
+                    <label>発汗 <button class="help" onclick="alert('特に冷汗（ひんやりした汗）を伴う場合はショックや低血糖の恐れがあります。')">?</button></label>
+                    <select id="s_sweat"><option value="">-</option><option value="なし">なし</option><option value="あり">あり(通常)</option><option value="冷汗">冷汗</option></select>
                 </div>
-                <div class="field"><label>表情</label>
-                    <select id="s_exp"><option value="普段通り">普段通り</option><option value="苦しそう">苦しそう</option><option value="険しい">険しい</option><option value="無表情">無表情</option></select>
+                <div class="field">
+                    <label>表情</label>
+                    <select id="s_exp"><option value="">-</option><option value="普段通り">普段通り</option><option value="苦しそう">苦しそう</option><option value="険しい">険しい</option><option value="無表情">無表情</option></select>
                 </div>
             </div>
         </div>
@@ -109,43 +353,57 @@
         <div class="section">
             <span class="section-title">症状・摂取・排泄</span>
             <div class="grid">
-                <div class="field"><label>痛み</label>
-                    <select id="s_pain"><option value="なし">なし</option><option value="胸痛">胸痛</option><option value="腹痛">腹痛</option><option value="頭痛">頭痛</option><option value="その他">その他</option></select>
+                <div class="field">
+                    <label>痛み <button class="help" onclick="alert('いつから、どこが、どのように痛むかを詳細に確認してください。')">?</button></label>
+                    <select id="s_pain"><option value="">-</option><option value="なし">なし</option><option value="胸痛">胸痛</option><option value="腹痛">腹痛</option><option value="頭痛">頭痛</option><option value="その他">その他</option></select>
                     <div class="sub-field"><label>部位</label><input type="text" id="s_pain_loc" class="small-input" placeholder="部位を入力"></div>
                 </div>
-                <div class="field"><label>呼吸状態 <button class="help" onclick="alert('喘鳴：ゼーゼー、ヒューヒューと音がする')">?</button></label>
-                    <select id="s_resp_st"><option value="正常">正常</option><option value="呼吸困難">呼吸困難</option><option value="喘鳴">喘鳴</option><option value="咳・痰">咳・痰</option></select>
+                <div class="field">
+                    <label>呼吸状態 <button class="help" onclick="alert('喘鳴：ゼーゼー・ヒューヒューという音。')">?</button></label>
+                    <select id="s_resp_st"><option value="">-</option><option value="正常">正常</option><option value="呼吸困難">呼吸困難</option><option value="喘鳴">喘鳴</option><option value="咳・痰">咳・痰</option></select>
                 </div>
-                <div class="field"><label>振戦・悪寒 <button class="help" onclick="alert('振戦：手足の小刻みな震え\n悪寒：発熱前などのゾクゾクする寒気')">?</button></label>
-                    <select id="s_shiver"><option value="なし">なし</option><option value="振戦あり">振戦あり</option><option value="悪寒あり">悪寒あり</option></select>
+                <div class="field">
+                    <label>振戦・悪寒 <button class="help" onclick="alert('悪寒（寒気）：発熱の初期段階で見られることが多いです。')">?</button></label>
+                    <select id="s_shiver"><option value="">-</option><option value="なし">なし</option><option value="振戦あり">振戦あり</option><option value="悪寒あり">悪寒あり</option></select>
                     <div class="sub-field"><label>部位</label><input type="text" id="s_shiver_loc" class="small-input" placeholder="手足・全身など"></div>
                 </div>
-                <div class="field"><label>痙攣・麻痺</label>
-                    <select id="s_paralysis"><option value="なし">なし</option><option value="痙攣">痙攣</option><option value="しびれ">しびれ</option><option value="麻痺">麻痺</option></select>
+                <div class="field">
+                    <label>痙攣・麻痺 <button class="help" onclick="alert('左右どちらかのみに麻痺がある場合は緊急性が高い可能性があります。')">?</button></label>
+                    <select id="s_paralysis"><option value="">-</option><option value="なし">なし</option><option value="痙攣">痙攣</option><option value="しびれ">しびれ</option><option value="麻痺">麻痺</option></select>
                     <div class="sub-field"><label>部位・左右・持続時間</label><input type="text" id="s_para_loc" class="small-input" placeholder="例：右手上肢、1分間"></div>
                 </div>
-                <div class="field"><label>食事摂取量</label><select id="s_meal"><option value="全量">全量</option><option value="2/3">2/3</option><option value="1/2">1/2</option><option value="1/3">1/3</option><option value="1/4">1/4</option><option value="未摂取">未摂取</option></select></div>
-                <div class="field"><label>水分摂取</label><select id="s_water"><option value="良好">良好</option><option value="やや不良">やや不良</option><option value="不良">不良</option></select></div>
-                <div class="field"><label>嘔気・嘔吐</label>
-                    <select id="s_vomit"><option value="なし">なし</option><option value="嘔気">嘔気あり</option><option value="食物残渣">食物残渣</option><option value="コーヒー様">コーヒー様</option><option value="鮮血混入">鮮血混入</option></select>
+                <div class="field"><label>食事摂取量</label><select id="s_meal"><option value="">-</option><option value="全量">全量</option><option value="2/3">2/3</option><option value="1/2">1/2</option><option value="1/3">1/3</option><option value="1/4">1/4</option><option value="未摂取">未摂取</option></select></div>
+                <div class="field"><label>水分摂取</label><select id="s_water"><option value="">-</option><option value="良好">良好</option><option value="やや不良">やや不良</option><option value="不良">不良</option></select></div>
+                
+                <div class="field">
+                    <label>嘔気・嘔吐 <button class="help" onclick="alert('コーヒー様：胃出血。鮮血混入：喉や食道の出血。誤嚥に注意してください。')">?</button></label>
+                    <select id="s_vomit"><option value="">-</option><option value="なし">なし</option><option value="嘔気">嘔気あり</option><option value="食物残渣">食物残渣</option><option value="コーヒー様">コーヒー様</option><option value="鮮血混入">鮮血混入</option></select>
+                    <div class="sub-field"><label>量・回数など</label><input type="text" id="s_vomit_amount" class="small-input" placeholder="例：コップ1杯程度、2回"></div>
                 </div>
-                <div class="field"><label>便の性状</label>
-                    <select id="s_stool"><option value="正常">正常</option><option value="軟便">軟便</option><option value="下痢">下痢</option><option value="血便">血便</option><option value="黒色便">黒色便</option><option value="便秘">便秘</option></select>
+                <div class="field">
+                    <label>便の性状 <button class="help" onclick="alert('黒色便：胃や十二指腸の出血。血便：大腸や肛門の出血。')">?</button></label>
+                    <select id="s_stool"><option value="">-</option><option value="正常">正常</option><option value="軟便">軟便</option><option value="下痢">下痢</option><option value="血便">血便</option><option value="黒色便">黒色便</option><option value="便秘">便秘</option><option value="なし">なし</option></select>
+                    <div class="sub-field"><label>色・量・間隔など</label><input type="text" id="s_stool_detail" class="small-input" placeholder="例：茶褐色、多量、本日3回目"></div>
                 </div>
-                <div class="field"><label>腹部膨満</label><select id="s_abd"><option value="なし">なし</option><option value="あり">あり</option></select></div>
-                <div class="field"><label>尿の性状</label><select id="s_urine"><option value="正常">正常</option><option value="濃い">濃い</option><option value="薄い">薄い</option><option value="血尿">血尿</option><option value="混濁">混濁</option></select></div>
+                <div class="field"><label>腹部膨満</label><select id="s_abd"><option value="">-</option><option value="なし">なし</option><option value="あり">あり</option></select></div>
+                <div class="field">
+                    <label>尿の性状 <button class="help" onclick="alert('濃い/混濁：脱水や尿路感染症の疑い。血尿：結石や炎症の疑い。')">?</button></label>
+                    <select id="s_urine"><option value="">-</option><option value="正常">正常</option><option value="濃い">濃い</option><option value="薄い">薄い</option><option value="血尿">血尿</option><option value="混濁">混濁</option><option value="なし">なし</option></select>
+                    <div class="sub-field"><label>色・量・間隔など</label><input type="text" id="s_urine_detail" class="small-input" placeholder="例：淡黄色、約200ml"></div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Tab 1 -->
     <div id="tab1" class="content">
         <div class="section">
             <span class="section-title">事故状況</span>
             <div class="grid">
-                <div class="field"><label>種別</label><select id="a_type"><option value="なし">なし</option><option value="転倒">転倒</option><option value="転落">転落</option></select></div>
+                <div class="field"><label>種別</label><select id="a_type"><option value="">-</option><option value="なし">なし</option><option value="転倒">転倒</option><option value="転落">転落</option></select></div>
                 <div class="field"><label>場所</label><input type="text" id="a_place" placeholder="居室/廊下/トイレ等"></div>
                 <div class="field"><label>体位</label>
-                    <select id="a_pos"><option value="仰向け">仰向け</option><option value="うつ伏せ">うつ伏せ</option><option value="右側臥位">右側臥位</option><option value="左側臥位">左側臥位</option><option value="座位">座位</option></select>
+                    <select id="a_pos"><option value="">-</option><option value="仰向け">仰向け</option><option value="うつ伏せ">うつ伏せ</option><option value="右側臥位">右側臥位</option><option value="左側臥位">左側臥位</option><option value="座位">座位</option></select>
                 </div>
                 <div class="field"><label>転落元</label><input type="text" id="a_source" placeholder="ベッド/車椅子等"></div>
             </div>
@@ -157,26 +415,28 @@
                 <label for="a_photos" class="file-input-label">📸 写真を撮影・選択する</label>
                 <input type="file" id="a_photos" accept="image/*" multiple onchange="previewImages(this)">
                 <div class="photo-preview-container" id="photoPreview">
-                    <p style="color:#999; font-size: 0.8em;">※写真はレポート送信時に添付有無が記録されます</p>
+                    <p style="color:#aaa; font-size: 0.8em;">※写真はレポート送信時に添付有無が記録されます</p>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <span class="section-title">外傷詳細 (有無・部位・程度)</span>
+            <span class="section-title">外傷詳細</span>
             <div class="grid">
                 <div class="field"><label>打撲箇所</label>
                     <input type="text" id="a_hit">
-                    <div class="sub-field"><label>左右</label><select id="a_hit_side"><option value="なし">-</option><option value="右">右</option><option value="左">左</option></select></div>
+                    <div class="sub-field"><label>左右</label><select id="a_hit_side"><option value="">-</option><option value="右">右</option><option value="左">左</option></select></div>
                 </div>
-                <div class="field"><label>発赤(赤み)</label><select id="a_red"><option value="無">無</option><option value="有">有</option></select></div>
-                <div class="field"><label>腫脹(はれ)</label><select id="a_swel"><option value="無">無</option><option value="有">有</option></select></div>
-                <div class="field"><label>切創/表皮剥離</label>
-                    <select id="a_cut"><option value="無">無</option><option value="切創あり">切創あり</option><option value="表皮剥離あり">表皮剥離あり</option></select>
+                <div class="field"><label>発赤(赤み)</label><select id="a_red"><option value="">-</option><option value="無">無</option><option value="有">有</option></select></div>
+                <div class="field"><label>腫脹(はれ)</label><select id="a_swel"><option value="">-</option><option value="無">無</option><option value="有">有</option></select></div>
+                <div class="field">
+                    <label>切創/表皮剥離 <button class="help" onclick="alert('表皮剥離：皮膚がめくれている状態。切創：スパッと切れている状態。')">?</button></label>
+                    <select id="a_cut"><option value="">-</option><option value="無">無</option><option value="切創あり">切創あり</option><option value="表皮剥離あり">表皮剥離あり</option></select>
                     <div class="sub-field"><label>大きさ/程度</label><input type="text" id="a_cut_detail" class="small-input" placeholder="例：3cmx2cm、出血少量"></div>
                 </div>
-                <div class="field"><label>熱傷(やけど)</label>
-                    <select id="a_burn"><option value="無">無</option><option value="有">有</option></select>
+                <div class="field">
+                    <label>熱傷(やけど) <button class="help" onclick="alert('Ⅰ度：赤み。Ⅱ度：水ぶくれ。Ⅲ度：白っぽくまたは黒く変色。')">?</button></label>
+                    <select id="a_burn"><option value="">-</option><option value="無">無</option><option value="有">有</option></select>
                     <div class="sub-field"><label>程度(Ⅰ~Ⅲ度)</label><input type="text" id="a_burn_detail" class="small-input" placeholder="例：Ⅱ度"></div>
                 </div>
             </div>
@@ -185,17 +445,22 @@
         <div class="section">
             <span class="section-title">その他事故</span>
             <div class="grid">
-                <div class="field"><label>誤薬</label><select id="a_med"><option value="なし">なし</option><option value="あり">あり</option></select></div>
-                <div class="field"><label>誤嚥・窒息</label><select id="a_asp"><option value="なし">なし</option><option value="疑い">疑いあり</option><option value="あり">あり</option></select></div>
-                <div class="field"><label>鼻出血</label><select id="a_nose"><option value="なし">なし</option><option value="あり">あり</option></select></div>
+                <div class="field"><label>誤薬</label><select id="a_med"><option value="">-</option><option value="なし">なし</option><option value="あり">あり</option></select></div>
+                <div class="field">
+                    <label>誤嚥・窒息 <button class="help" onclick="alert('食事中だけでなく嘔吐物の吸い込みにも注意してください。')">?</button></label>
+                    <select id="a_asp"><option value="">-</option><option value="なし">なし</option><option value="疑い">疑いあり</option><option value="あり">あり</option></select>
+                </div>
+                <div class="field"><label>鼻出血</label><select id="a_nose"><option value="">-</option><option value="なし">なし</option><option value="あり">あり</option></select></div>
             </div>
         </div>
     </div>
 
+    <!-- Tab 2 -->
     <div id="tab2" class="content">
         <div class="section">
             <span class="section-title">対応・処置</span>
-            <div class="field"><label>実施した処置</label>
+            <div class="field">
+                <label>実施した処置 <button class="help" onclick="alert('例：クーリング(冷却)、バイタル測定、患部洗浄、看護師報告など。')">?</button></label>
                 <textarea id="c_action" rows="3" placeholder="安静、冷却、消毒、絆創膏貼付など"></textarea>
             </div>
         </div>
@@ -211,12 +476,12 @@
         </div>
         
         <button class="btn-generate" onclick="generate()">記録を自動生成する</button>
-        
-        <textarea id="outputReport" readonly placeholder="生成された記録がここに表示されます"></textarea>
+        <textarea id="outputReport" placeholder="生成された記録がここに表示されます。"></textarea>
         
         <div class="action-btns">
             <button id="copyBtn" class="btn-action btn-copy" onclick="copyToClipboard()">📋 記録をコピー</button>
             <button class="btn-action btn-print" onclick="window.print()">🖨️ 印刷する</button>
+            <button class="btn-action btn-clear" onclick="clearAll()">🗑️ 一括クリア</button>
         </div>
     </div>
 </div>
@@ -229,12 +494,10 @@
         document.querySelectorAll('.content').forEach((c, i) => c.classList.toggle('active', i === idx));
     }
 
-    // 写真プレビュー
     function previewImages(input) {
         const container = document.getElementById('photoPreview');
         container.innerHTML = ""; 
         attachedPhotoCount = input.files.length;
-
         if (input.files && input.files.length > 0) {
             Array.from(input.files).forEach(file => {
                 const reader = new FileReader();
@@ -247,67 +510,128 @@
                 reader.readAsDataURL(file);
             });
         } else {
-            container.innerHTML = '<p style="color:#999; font-size: 0.8em;">※写真はレポート送信時に添付有無が記録されます</p>';
+            container.innerHTML = '<p style="color:#aaa; font-size: 0.8em;">※写真はレポート送信時に添付有無が記録されます</p>';
         }
     }
 
-    // レポート生成
+    const getV = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return "";
+        const val = el.value.trim();
+        return (val === "-" || val === "") ? "" : val;
+    };
+
     function generate() {
-        const getV = (id) => document.getElementById(id).value || "未入力";
         const now = new Date().toLocaleString();
+        let r = `【状態観察報告 (ONMUSUBI) v1.4】\n記録日時: ${now}\n\n`;
 
-        let r = `【状態観察報告 (ONMUSUBI) v1.3】\n記録日時: ${now}\n\n`;
-        r += `■バイタルサイン\n`;
-        r += `体温:${getV('v_temp')}℃ 脈拍:${getV('v_pulse')} 不整脈:${getV('v_arrhythmia')} 血圧:${getV('v_bp')} SpO2:${getV('v_spo2')}% 呼吸数:${getV('v_resp')}\n\n`;
-        
-        r += `■意識・全身状態\n`;
-        r += `呼名反応:${getV('s_cons')} 発語:${getV('s_speech')} 顔色:${getV('s_face')} 発汗:${getV('s_sweat')} 表情:${getV('s_exp')}\n\n`;
-        
-        r += `■症状・摂取・排泄\n`;
-        r += `痛み:${getV('s_pain')}(${getV('s_pain_loc')}) 呼吸状態:${getV('s_resp_st')}\n`;
-        r += `振戦悪寒:${getV('s_shiver')}(${getV('s_shiver_loc')}) 痙攣麻痺:${getV('s_paralysis')}(${getV('s_para_loc')})\n`;
-        r += `食事:${getV('s_meal')} 水分:${getV('s_water')} 嘔吐:${getV('s_vomit')} 便:${getV('s_stool')} 腹満:${getV('s_abd')} 尿:${getV('s_urine')}\n\n`;
+        let vitals = [];
+        if(getV('v_temp')) vitals.push(`体温:${getV('v_temp')}℃`);
+        if(getV('v_pulse')) vitals.push(`脈拍:${getV('v_pulse')}`);
+        if(getV('v_arrhythmia')) vitals.push(`不整脈:${getV('v_arrhythmia')}`);
+        let bp_h = getV('v_bp_high'), bp_l = getV('v_bp_low');
+        if(bp_h || bp_l) vitals.push(`血圧:${bp_h||"?"}/${bp_l||"?"}mmHg`);
+        if(getV('v_spo2')) vitals.push(`SpO2:${getV('v_spo2')}%`);
+        if(getV('v_resp')) vitals.push(`呼吸数:${getV('v_resp')}`);
+        if(vitals.length > 0) r += `■バイタルサイン\n${vitals.join(" ")}\n\n`;
 
-        if(getV('a_type') !== "なし" || getV('a_hit') !== "" || getV('a_cut') !== "無" || attachedPhotoCount > 0) {
-            r += `■事故・外傷\n`;
-            r += `種別:${getV('a_type')} 場所:${getV('a_place')} 体位:${getV('a_pos')} 転落元:${getV('a_source')}\n`;
-            r += `部位:${getV('a_hit_side')}${getV('a_hit')} (赤み:${getV('a_red')} 腫れ:${getV('a_swel')})\n`;
-            r += `創傷:${getV('a_cut')}(${getV('a_cut_detail')}) 熱傷:${getV('a_burn')}(${getV('a_burn_detail')})\n`;
-            r += `その他(誤薬:${getV('a_med')} 誤嚥:${getV('a_asp')} 鼻出血:${getV('a_nose')})\n`;
-            if(attachedPhotoCount > 0) {
-                r += `【写真添付あり: ${attachedPhotoCount}枚】\n`;
-            }
-            r += `\n`;
-        }
+        let states = [];
+        if(getV('s_cons')) states.push(`呼名反応:${getV('s_cons')}`);
+        if(getV('s_speech')) states.push(`発語:${getV('s_speech')}`);
+        if(getV('s_face')) states.push(`顔色:${getV('s_face')}`);
+        if(getV('s_sweat')) states.push(`発汗:${getV('s_sweat')}`);
+        if(getV('s_exp')) states.push(`表情:${getV('s_exp')}`);
+        if(states.length > 0) r += `■意識・全身状態\n${states.join(" ")}\n\n`;
 
-        r += `■対応・処置\n${getV('c_action')}\n\n`;
-        r += `■連絡状況\n`;
-        r += `家族連絡:${getV('c_fam')} / 医師連絡:${getV('c_doc')}\n`;
-        if(getV('c_ems') !== "") r += `救急搬送:${getV('c_ems')} (${getV('c_hosp')})\n`;
+        let symp = [];
+        if(getV('s_pain')) symp.push(`痛み:${getV('s_pain')}${getV('s_pain_loc') ? '('+getV('s_pain_loc')+')' : ''}`);
+        if(getV('s_resp_st')) symp.push(`呼吸状態:${getV('s_resp_st')}`);
+        if(getV('s_shiver')) symp.push(`振戦悪寒:${getV('s_shiver')}${getV('s_shiver_loc') ? '('+getV('s_shiver_loc')+')' : ''}`);
+        if(getV('s_paralysis')) symp.push(`痙攣麻痺:${getV('s_paralysis')}${getV('s_para_loc') ? '('+getV('s_para_loc')+')' : ''}`);
+        if(getV('s_meal')) symp.push(`食事:${getV('s_meal')}`);
+        if(getV('s_water')) symp.push(`水分:${getV('s_water')}`);
+        if(getV('s_vomit')) symp.push(`嘔吐:${getV('s_vomit')}${getV('s_vomit_amount') ? '('+getV('s_vomit_amount')+')' : ''}`);
+        if(getV('s_stool')) symp.push(`便:${getV('s_stool')}${getV('s_stool_detail') ? '('+getV('s_stool_detail')+')' : ''}`);
+        if(getV('s_abd')) symp.push(`腹満:${getV('s_abd')}`);
+        if(getV('s_urine')) symp.push(`尿:${getV('s_urine')}${getV('s_urine_detail') ? '('+getV('s_urine_detail')+')' : ''}`);
+        if(symp.length > 0) r += `■症状・摂取・排泄\n${symp.join(" ")}\n\n`;
 
-        document.getElementById('outputReport').value = r;
+        let acc = [];
+        if(getV('a_type')) acc.push(`種別:${getV('a_type')}`);
+        if(getV('a_place')) acc.push(`場所:${getV('a_place')}`);
+        if(getV('a_pos')) acc.push(`体位:${getV('a_pos')}`);
+        if(getV('a_source')) acc.push(`転落元:${getV('a_source')}`);
+        if(acc.length > 0) r += `■事故・外傷\n${acc.join(" ")}\n`;
+
+        let trauma = [];
+        if(getV('a_hit')) trauma.push(`打撲:${getV('a_hit_side')}${getV('a_hit')}`);
+        if(getV('a_red')) trauma.push(`赤み:${getV('a_red')}`);
+        if(getV('a_swel')) trauma.push(`腫れ:${getV('a_swel')}`);
+        if(getV('a_cut')) trauma.push(`創傷:${getV('a_cut')}${getV('a_cut_detail') ? '('+getV('a_cut_detail')+')' : ''}`);
+        if(getV('a_burn')) trauma.push(`熱傷:${getV('a_burn')}${getV('a_burn_detail') ? '('+getV('a_burn_detail')+')' : ''}`);
+        if(trauma.length > 0) r += `${trauma.join(" ")}\n`;
+
+        let others = [];
+        if(getV('a_med')) others.push(`誤薬:${getV('a_med')}`);
+        if(getV('a_asp')) others.push(`誤嚥:${getV('a_asp')}`);
+        if(getV('a_nose')) others.push(`鼻出血:${getV('a_nose')}`);
+        if(others.length > 0) r += `その他(${others.join(" ")})\n`;
+        if(attachedPhotoCount > 0) r += `【写真添付あり: ${attachedPhotoCount}枚】\n`;
+        if(acc.length > 0 || trauma.length > 0 || others.length > 0 || attachedPhotoCount > 0) r += `\n`;
+
+        if(getV('c_action')) r += `■対応・処置\n${getV('c_action')}\n\n`;
+
+        let contact = [];
+        if(getV('c_fam')) contact.push(`家族連絡:${getV('c_fam').replace('T', ' ')}`);
+        if(getV('c_doc')) contact.push(`医師連絡:${getV('c_doc').replace('T', ' ')}`);
+        if(getV('c_ems')) contact.push(`救急搬送:${getV('c_ems')} ${getV('c_hosp') ? '('+getV('c_hosp')+')' : ''}`);
+        if(contact.length > 0) r += `■連絡状況\n${contact.join(" / ")}\n`;
+
+        document.getElementById('outputReport').value = r.trim();
     }
 
-    // コピー機能
     function copyToClipboard() {
         const text = document.getElementById('outputReport');
-        if (!text.value) {
-            alert("記録が生成されていません。先に「記録を自動生成する」を押してください。");
-            return;
-        }
+        if (!text.value) { alert("記録が生成されていません。"); return; }
         text.select();
         document.execCommand('copy');
-        
         const btn = document.getElementById('copyBtn');
-        const originalText = btn.innerText;
         btn.innerText = "✅ コピーしました！";
-        btn.style.background = "#28a745";
-        
-        setTimeout(() => {
-            btn.innerText = originalText;
-            btn.style.background = "#007bff";
-        }, 2000);
+        setTimeout(() => { btn.innerText = "📋 記録をコピー"; }, 2000);
     }
+
+    function clearAll() {
+        if (confirm("すべてクリアしますか？")) {
+            document.querySelectorAll('input, select, textarea').forEach(el => { el.value = ''; });
+            document.getElementById('photoPreview').innerHTML = '<p style="color:#aaa; font-size: 0.8em;">※写真はレポート送信時に添付有無が記録されます</p>';
+            attachedPhotoCount = 0;
+        }
+    }
+
+    window.addEventListener('beforeprint', () => {
+        document.querySelectorAll('.section').forEach(section => {
+            let sectionHasValue = false;
+            section.querySelectorAll('.field').forEach(field => {
+                let fieldHasValue = false;
+                field.querySelectorAll('input, select, textarea').forEach(input => {
+                    if (input.type === 'file') return;
+                    let val = input.value.trim();
+                    if (val !== "" && val !== "-") fieldHasValue = true;
+                });
+                if (!fieldHasValue) field.classList.add('no-print'); else sectionHasValue = true;
+            });
+            if (section.querySelector('.photo-upload-area')) {
+                if (attachedPhotoCount > 0) sectionHasValue = true;
+                else section.classList.add('no-print');
+            } else if (!sectionHasValue) {
+                section.classList.add('no-print');
+            }
+        });
+    });
+
+    window.addEventListener('afterprint', () => {
+        document.querySelectorAll('.no-print').forEach(el => el.classList.remove('no-print'));
+    });
 </script>
 
 </body>
